@@ -50,15 +50,29 @@ const view = (core, proc, win) =>
 
 const actions = (core, proc, win) => {
   const setState = (key, value) => {
-    win.setTitle(`${proc.metadata.title.en_EN} - ${value.filename}`);
     return {[key]: value};
   };
 
   return {
-    setVideo: video => state => setState('video', video),
-    setImage: image => state => setState('image', image)
+    setVideo: video => state => ({video}),
+    setImage: image => state => ({image})
   };
 };
+
+const openFile = async (core, proc, win, a, file) => {
+  const url = await core.make('osjs/vfs').url(file.path);
+  const ref = Object.assign({}, file, {url});
+
+  if (file.mime.match(/^image/)) {
+    a.setImage(ref)
+  } else if (file.mime.match(/^video/)) {
+    a.setVideo(ref);
+  }
+
+  win.setTitle(`${proc.metadata.title.en_EN} - ${file.filename}`);
+  proc.args.file = file;
+};
+
 
 OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) => {
   const proc = core.make('osjs/application', {
@@ -70,19 +84,6 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
   const state = {
     image: null,
     video: null
-  };
-
-  const openFile = async (a, file) => {
-    const url = await core.make('osjs/vfs').url(file.path);
-    const ref = Object.assign({}, file, {url});
-
-    if (file.mime.match(/^image/)) {
-      a.setImage(ref)
-    } else if (file.mime.match(/^video/)) {
-      a.setVideo(ref);
-    }
-
-    proc.args.file = file;
   };
 
   proc.createWindow({
@@ -101,7 +102,7 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
           $content);
 
           if (args.file) {
-            openFile(a, args.file);
+            openFile(core, proc, win, a, args.file);
           }
     })
 
