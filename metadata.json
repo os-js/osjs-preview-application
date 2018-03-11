@@ -1,0 +1,17 @@
+{
+  "name": "Preview",
+  "category": "graphics",
+  "title": {
+    "en_EN": "Preview"
+  },
+  "description": {
+    "en_EN": "Preview"
+  },
+  "mimes": [
+    "^image\/(.*)",
+    "^video\/(.*)"
+  ],
+  "files": [
+    "index.js"
+  ]
+}
