@@ -48,17 +48,6 @@ const view = (core, proc, win) =>
       ].filter(i => !!i)),
     ]);
 
-const actions = (core, proc, win) => {
-  const setState = (key, value) => {
-    return {[key]: value};
-  };
-
-  return {
-    setVideo: video => state => ({video}),
-    setImage: image => state => ({image})
-  };
-};
-
 const openFile = async (core, proc, win, a, file) => {
   const url = await core.make('osjs/vfs').url(file.path);
   const ref = Object.assign({}, file, {url});
@@ -81,11 +70,6 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
     metadata
   });
 
-  const state = {
-    image: null,
-    video: null
-  };
-
   proc.createWindow({
     id: 'PreviewWindow',
     title: metadata.title.en_EN,
@@ -96,14 +80,17 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
     .on('destroy', () => proc.destroy())
     .on('render', (win) => win.focus())
     .render(($content, win) => {
-      const a = app(state,
-          actions(core, proc, win),
-          view(core, proc, win),
-          $content);
+      const a = app({
+        image: null,
+        video: null
+      }, {
+        setVideo: video => state => ({video}),
+        setImage: image => state => ({image})
+      }, view(core, proc, win), $content);
 
-          if (args.file) {
-            openFile(core, proc, win, a, args.file);
-          }
+      if (args.file) {
+        openFile(core, proc, win, a, args.file);
+      }
     })
 
   return proc;
