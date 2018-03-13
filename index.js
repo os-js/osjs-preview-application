@@ -73,9 +73,7 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
   proc.createWindow({
     id: 'PreviewWindow',
     title: metadata.title.en_EN,
-    state: {
-      dimension: {width: 400, height: 400}
-    }
+    dimension: {width: 400, height: 400}
   })
     .on('destroy', () => proc.destroy())
     .on('render', (win) => win.focus())
