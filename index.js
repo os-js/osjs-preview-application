@@ -94,7 +94,7 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
           core.make('osjs/contextmenu').show({
             menu: [
               {label: 'Open', onclick: () => {
-                core.make('osjs/dialog', 'file', {type: 'open'}, (btn, item) => {
+                core.make('osjs/dialog', 'file', {type: 'open', mime: metadata.mimes}, (btn, item) => {
                   if (btn === 'ok') {
                     bus.emit('readFile', item);
                   }
