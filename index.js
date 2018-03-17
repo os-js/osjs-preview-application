@@ -37,11 +37,13 @@ import {
   Box,
   BoxContainer,
   Image,
-  Video
+  Video,
+  Menubar
 } from '@osjs/gui';
 
 const view = (core, proc, win) =>
-  (state, actions) => h(Box, {orientation: 'vertical'}, [
+  (state, actions) => h(Box, {}, [
+      h(Menubar, {items: state.menu, onclick: (item, index, ev) => actions.menu({item, index, ev})}),
       h(BoxContainer, {grow: 1}, [
         state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
         state.video ? h(Video, {src: state.video.url, onload: (ev) => win.resizeFit(ev.target)}) : null
@@ -64,6 +66,7 @@ const openFile = async (core, proc, win, a, file) => {
 
 
 OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) => {
+  const bus = core.make('osjs/event-handler', 'Preview');
   const proc = core.make('osjs/application', {
     args,
     options,
@@ -80,14 +83,34 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
     .render(($content, win) => {
       const a = app({
         image: null,
-        video: null
+        video: null,
+        menu: [
+          {label: 'File'}
+        ],
       }, {
         setVideo: video => state => ({video}),
-        setImage: image => state => ({image})
+        setImage: image => state => ({image}),
+        menu: ({item, index, ev}) => state => {
+          core.make('osjs/contextmenu').show({
+            menu: [
+              {label: 'Open', onclick: () => {
+                core.make('osjs/dialog', 'file', {type: 'open'}, (btn, item) => {
+                  if (btn === 'ok') {
+                    bus.emit('readFile', item);
+                  }
+                });
+              }},
+              {label: 'Quit', onclick: () => proc.destroy()}
+            ],
+            position: ev.target
+          });
+        }
       }, view(core, proc, win), $content);
 
+      bus.on('readFile', file => openFile(core, proc, win, a, file));
+
       if (args.file) {
-        openFile(core, proc, win, a, args.file);
+        bus.emit('readFile', args.file);
       }
     })
 
