@@ -12,6 +12,7 @@
     "^video\/(.*)"
   ],
   "files": [
-    "index.js"
+    "index.js",
+    "index.css"
   ]
 }
