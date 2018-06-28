@@ -12,5 +12,3 @@
 # OS.js v3 Preview Package
 
 This is the Image/Video Preview Package for OS.js v3
-
-**PLEASE NOTE THAT THIS IS AN ALPHA PRE-RELEASE AND SUBJECT TO CHANGE WITHOUT NOTICE**
