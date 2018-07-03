@@ -38,12 +38,17 @@ import {
   BoxContainer,
   Image,
   Video,
-  Menubar
+  Menubar,
+  MenubarItem
 } from '@osjs/gui';
 
 const view = (core, proc, win) =>
   (state, actions) => h(Box, {}, [
-      h(Menubar, {items: state.menu, onclick: (item, index, ev) => actions.menu({item, index, ev})}),
+      h(Menubar, {}, [
+        h(MenubarItem, {
+          onclick: ev => actions.menu(ev)
+        }, 'File')
+      ]),
       h(BoxContainer, {grow: 1}, [
         state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
         state.video ? h(Video, {src: state.video.url, onload: (ev) => win.resizeFit(ev.target)}) : null
@@ -83,14 +88,11 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
     .render(($content, win) => {
       const a = app({
         image: null,
-        video: null,
-        menu: [
-          {label: 'File'}
-        ],
+        video: null
       }, {
         setVideo: video => state => ({video}),
         setImage: image => state => ({image}),
-        menu: ({item, index, ev}) => state => {
+        menu: (ev) => state => {
           core.make('osjs/contextmenu').show({
             menu: [
               {label: 'Open', onclick: () => {
