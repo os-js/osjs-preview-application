@@ -35,8 +35,7 @@ module.exports = (options, {createWebpack}) => createWebpack(__dirname, {
   outputPath: path.resolve(options.dist.packages, metadata.name),
   entry: {
     index: [
-      path.resolve(__dirname, 'index.js'),
-      path.resolve(__dirname, 'index.scss')
+      path.resolve(__dirname, 'index.js')
     ]
   }
 });
