@@ -56,7 +56,7 @@ const view = (core, proc, win) =>
     ]);
 
 const openFile = async (core, proc, win, a, file) => {
-  const url = await core.make('osjs/vfs').url(file.path);
+  const url = await core.make('osjs/vfs').url(file);
   const ref = Object.assign({}, file, {url});
 
   if (file.mime.match(/^image/)) {
