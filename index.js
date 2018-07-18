@@ -44,23 +44,23 @@ import {
 
 const view = (core, proc, win) =>
   (state, actions) => h(Box, {}, [
-      h(Menubar, {}, [
-        h(MenubarItem, {
-          onclick: ev => actions.menu(ev)
-        }, 'File')
-      ]),
-      h(BoxContainer, {grow: 1}, [
-        state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
-        state.video ? h(Video, {src: state.video.url, onload: (ev) => win.resizeFit(ev.target)}) : null
-      ].filter(i => !!i)),
-    ]);
+    h(Menubar, {}, [
+      h(MenubarItem, {
+        onclick: ev => actions.menu(ev)
+      }, 'File')
+    ]),
+    h(BoxContainer, {grow: 1}, [
+      state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
+      state.video ? h(Video, {src: state.video.url, onload: (ev) => win.resizeFit(ev.target)}) : null
+    ].filter(i => !!i)),
+  ]);
 
 const openFile = async (core, proc, win, a, file) => {
   const url = await core.make('osjs/vfs').url(file);
   const ref = Object.assign({}, file, {url});
 
   if (file.mime.match(/^image/)) {
-    a.setImage(ref)
+    a.setImage(ref);
   } else if (file.mime.match(/^video/)) {
     a.setVideo(ref);
   }
@@ -81,6 +81,7 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
   proc.createWindow({
     id: 'PreviewWindow',
     title: metadata.title.en_EN,
+    icon: proc.resource(metadata.icon),
     dimension: {width: 400, height: 400}
   })
     .on('destroy', () => proc.destroy())
@@ -114,7 +115,7 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
       if (args.file) {
         bus.emit('readFile', args.file);
       }
-    })
+    });
 
   return proc;
 });
