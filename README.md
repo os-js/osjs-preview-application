@@ -18,5 +18,4 @@ This is the Image/Video Preview Application for OS.js v3
 ```bash
 npm install --save @osjs/preview-application
 npm run package:discover
-npm run build:manifest
 ```
