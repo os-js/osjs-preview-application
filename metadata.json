@@ -13,6 +13,6 @@
     "^video\/(.*)"
   ],
   "files": [
-    "index.js"
+    "main.js"
   ]
 }
