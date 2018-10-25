@@ -86,6 +86,14 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
   })
     .on('destroy', () => proc.destroy())
     .on('render', (win) => win.focus())
+    .on('drop', (ev, data) => {
+      if (data.isFile && data.mime) {
+        const found = metadata.mimes.find(m => (new RegExp(m)).test(data.mime));
+        if (found) {
+          bus.emit('readFile', data);
+        }
+      }
+    })
     .render(($content, win) => {
       const a = app({
         image: null,
