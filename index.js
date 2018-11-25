@@ -49,7 +49,7 @@ const view = (core, proc, win) =>
         onclick: ev => actions.menu(ev)
       }, 'File')
     ]),
-    h(BoxContainer, {grow: 1}, [
+    h(BoxContainer, {grow: 1, shrink: 1}, [
       state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
       state.video ? h(Video, {src: state.video.url, onload: (ev) => win.resizeFit(ev.target)}) : null
     ].filter(i => !!i)),
