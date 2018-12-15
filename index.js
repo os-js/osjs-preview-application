@@ -42,12 +42,12 @@ import {
   MenubarItem
 } from '@osjs/gui';
 
-const view = (core, proc, win) =>
+const view = (core, proc, win, _) =>
   (state, actions) => h(Box, {}, [
     h(Menubar, {}, [
       h(MenubarItem, {
         onclick: ev => actions.menu(ev)
-      }, 'File')
+      }, _('LBL_FILE'))
     ]),
     h(BoxContainer, {grow: 1, shrink: 1}, [
       state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
@@ -71,6 +71,7 @@ const openFile = async (core, proc, win, a, file) => {
 
 
 OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) => {
+  const _ = core.make('osjs/locale').translate;
   const bus = core.make('osjs/event-handler', 'Preview');
   const proc = core.make('osjs/application', {
     args,
@@ -78,9 +79,12 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
     metadata
   });
 
+  const title = core.make('osjs/locale')
+    .translatableFlat(metadata.title);
+
   proc.createWindow({
     id: 'PreviewWindow',
-    title: metadata.title.en_EN,
+    title,
     icon: proc.resource(metadata.icon),
     dimension: {width: 400, height: 400}
   })
@@ -104,19 +108,19 @@ OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) =
         menu: (ev) => state => {
           core.make('osjs/contextmenu').show({
             menu: [
-              {label: 'Open', onclick: () => {
+              {label: _('LBL_OPEN'), onclick: () => {
                 core.make('osjs/dialog', 'file', {type: 'open', mime: metadata.mimes}, (btn, item) => {
                   if (btn === 'ok') {
                     bus.emit('readFile', item);
                   }
                 });
               }},
-              {label: 'Quit', onclick: () => proc.destroy()}
+              {label: _('LBL_QUIT'), onclick: () => proc.destroy()}
             ],
             position: ev.target
           });
         }
-      }, view(core, proc, win), $content);
+      }, view(core, proc, win, _), $content);
 
       bus.on('readFile', file => openFile(core, proc, win, a, file));
 
