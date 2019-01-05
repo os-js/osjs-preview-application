@@ -53,19 +53,19 @@ const view = (core, proc, win, _) =>
       }, _('LBL_FILE'))
     ]),
     h(BoxContainer, {grow: 1, shrink: 1}, [
-      state.image ? h(Image, {src: state.image.url, onload: (ev) => win.resizeFit(ev.target)}) : null,
-      state.video ? h(Video, {src: state.video.url, onload: (ev) => win.resizeFit(ev.target)}) : null
+      state.image ? h(Image, {src: state.image.url, onload: (ev) => actions.resizeFit(ev.target)}) : null,
+      state.video ? h(Video, {src: state.video.url, onload: (ev) => actions.resizeFit(ev.target)}) : null
     ].filter(i => !!i)),
   ]);
 
-const openFile = async (core, proc, win, a, file) => {
+const openFile = async (core, proc, win, a, file, restore) => {
   const url = await core.make('osjs/vfs').url(file);
   const ref = Object.assign({}, file, {url});
 
   if (file.mime.match(/^image/)) {
-    a.setImage(ref);
+    a.setImage({image: ref, restore});
   } else if (file.mime.match(/^video/)) {
-    a.setVideo(ref);
+    a.setVideo({video: ref, restore});
   }
 
   win.setTitle(`${proc.metadata.title.en_EN} - ${file.filename}`);
@@ -75,7 +75,6 @@ const openFile = async (core, proc, win, a, file) => {
 
 osjs.register(applicationName, (core, args, options, metadata) => {
   const _ = core.make('osjs/locale').translate;
-  const bus = core.make('osjs/event-handler', 'Preview');
   const proc = core.make('osjs/application', {
     args,
     options,
@@ -97,24 +96,31 @@ osjs.register(applicationName, (core, args, options, metadata) => {
       if (data.isFile && data.mime) {
         const found = metadata.mimes.find(m => (new RegExp(m)).test(data.mime));
         if (found) {
-          bus.emit('readFile', data);
+          proc.emit('readFile', data, false);
         }
       }
     })
     .render(($content, win) => {
       const a = app({
         image: null,
-        video: null
+        video: null,
+        restore: false
       }, {
-        setVideo: video => state => ({video}),
-        setImage: image => state => ({image}),
-        menu: (ev) => state => {
+        resizeFit: target => state => {
+          if (!state.restore) {
+            win.resizeFit(target);
+          }
+        },
+
+        setVideo: ({video, restore}) => ({video, restore}),
+        setImage: ({image, restore}) => ({image, restore}),
+        menu: (ev) => {
           core.make('osjs/contextmenu').show({
             menu: [
               {label: _('LBL_OPEN'), onclick: () => {
                 core.make('osjs/dialog', 'file', {type: 'open', mime: metadata.mimes}, (btn, item) => {
                   if (btn === 'ok') {
-                    bus.emit('readFile', item);
+                    proc.emit('readFile', item, false);
                   }
                 });
               }},
@@ -125,10 +131,10 @@ osjs.register(applicationName, (core, args, options, metadata) => {
         }
       }, view(core, proc, win, _), $content);
 
-      bus.on('readFile', file => openFile(core, proc, win, a, file));
+      proc.on('readFile', (file, restore) => openFile(core, proc, win, a, file, restore));
 
       if (args.file) {
-        bus.emit('readFile', args.file);
+        proc.emit('readFile', args.file, !!proc.options.restore);
       }
     });
 
