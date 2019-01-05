@@ -28,6 +28,9 @@
  * @licence Simplified BSD License
  */
 
+import osjs from 'osjs';
+import {name as applicationName} from './metadata.json';
+
 import {
   h,
   app
@@ -70,7 +73,7 @@ const openFile = async (core, proc, win, a, file) => {
 };
 
 
-OSjs.make('osjs/packages').register('Preview', (core, args, options, metadata) => {
+osjs.register(applicationName, (core, args, options, metadata) => {
   const _ = core.make('osjs/locale').translate;
   const bus = core.make('osjs/event-handler', 'Preview');
   const proc = core.make('osjs/application', {
