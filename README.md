@@ -16,6 +16,8 @@
 
 This is the Image/Video Preview Application for OS.js v3
 
+![Screenshot](https://raw.githubusercontent.com/os-js/osjs-preview-application/master/screenshot.png)
+
 ## Installation
 
 ```bash
