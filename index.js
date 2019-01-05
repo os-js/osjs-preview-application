@@ -52,7 +52,7 @@ const view = (core, proc, win, _) =>
         onclick: ev => actions.menu(ev)
       }, _('LBL_FILE'))
     ]),
-    h(BoxContainer, {grow: 1, shrink: 1}, [
+    h(BoxContainer, {grow: 1, shrink: 1, style: {overflow: state.image ? 'auto' : 'hidden'}}, [
       state.image ? h(Image, {src: state.image.url, onload: (ev) => actions.resizeFit(ev.target)}) : null,
       state.video ? h(Video, {src: state.video.url, onload: (ev) => actions.resizeFit(ev.target)}) : null
     ].filter(i => !!i)),
