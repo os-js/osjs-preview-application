@@ -108,7 +108,11 @@ osjs.register(applicationName, (core, args, options, metadata) => {
       }, {
         resizeFit: target => state => {
           if (!state.restore) {
-            win.resizeFit(target);
+            try {
+              win.resizeFit(target);
+            } catch (e) {
+              console.warn(e);
+            }
           }
         },
 
