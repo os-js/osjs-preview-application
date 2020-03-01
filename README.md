@@ -8,18 +8,17 @@
 [![Support](https://img.shields.io/badge/opencollective-donate-red.svg)](https://opencollective.com/osjs)
 [![Donate](https://img.shields.io/badge/liberapay-donate-yellowgreen.svg)](https://liberapay.com/os-js/)
 [![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://paypal.me/andersevenrud)
-[![Community](https://img.shields.io/badge/join-community-green.svg)](https://community.os-js.org/)
 
-# OS.js v3 Preview Application
+# OS.js Preview Application
 
-This is the Image/Video Preview Application for OS.js v3
+This is the Image/Video Preview Application for OS.js.
 
 ![Screenshot](https://raw.githubusercontent.com/os-js/osjs-preview-application/master/screenshot.png)
 
 ## Installation
 
 ```bash
-npm install --save --production @osjs/preview-application
+npm install @osjs/preview-application
 npm run package:discover
 ```
 
